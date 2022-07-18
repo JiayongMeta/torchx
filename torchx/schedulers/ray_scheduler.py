@@ -397,17 +397,15 @@ if _has_ray:
             return iterator
 
         def list(self) -> List[str]:
-            address = os.getenv('RAY_ADDRESS')
+            address = os.getenv("RAY_ADDRESS")
             if address is None:
                 raise Exception(
                     "RAY_ADDRESS env variable is expected to be set to list jobs on ray scheduler"
                 )
             client = JobSubmissionClient(address)
             jobs_dict = client.list_jobs()
-            ip = address.split("http://",1)[-1]
-            app_handles = [
-                f"{ip}-{job_id}" for job_id in jobs_dict.keys()
-            ]
+            ip = address.split("http://", 1)[-1]
+            app_handles = [f"{ip}-{job_id}" for job_id in jobs_dict.keys()]
             return app_handles
 
 

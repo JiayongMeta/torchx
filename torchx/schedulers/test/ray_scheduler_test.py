@@ -316,9 +316,10 @@ if has_ray():
                 self.assertEqual(parsed_appid, app_id)
 
         def test_list_throws_without_address(self) -> None:
-            with self.assertRaisesRegex(Exception, "RAY_ADDRESS env variable is expected"):
+            with self.assertRaisesRegex(
+                Exception, "RAY_ADDRESS env variable is expected"
+            ):
                 self._scheduler.list()
-
 
     class RayClusterSetup:
         _instance = None  # pyre-ignore[4]
@@ -438,8 +439,6 @@ if has_ray():
         ) -> Iterable[str]:
             return ray_scheduler.log_iter(app_id=app_id)
 
-        def list(
-            self, ray_scheduler: RayScheduler
-        ) -> List[str]:
-            os.environ['RAY_ADDRESS'] = "http://127.0.0.1:8265"
+        def list(self, ray_scheduler: RayScheduler) -> List[str]:
+            os.environ["RAY_ADDRESS"] = "http://127.0.0.1:8265"
             return ray_scheduler.list()
