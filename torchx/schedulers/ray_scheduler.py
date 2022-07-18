@@ -398,9 +398,10 @@ if _has_ray:
 
         def list(self) -> List[str]:
             address = os.getenv("RAY_ADDRESS")
-            if address is None:
+            if not address:
                 raise Exception(
-                    "RAY_ADDRESS env variable is expected to be set to list jobs on ray scheduler"
+                    "RAY_ADDRESS env variable is expected to be set validly to list jobs on ray scheduler."
+                    " See https://docs.ray.io/en/latest/cluster/jobs-package-ref.html#job-submission-sdk for more info"
                 )
             client = JobSubmissionClient(address)
             jobs_dict = client.list_jobs()
