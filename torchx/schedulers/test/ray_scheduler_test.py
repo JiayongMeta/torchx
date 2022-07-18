@@ -8,7 +8,7 @@ import os
 import tempfile
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Any, cast, Iterable, Iterator, Optional, Type
+from typing import Any, cast, Iterable, Iterator, List, Optional, Type
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -315,6 +315,11 @@ if has_ray():
                 self.assertEqual(parsed_addr, addr)
                 self.assertEqual(parsed_appid, app_id)
 
+        def test_list_throws_without_address(self) -> None:
+            with self.assertRaisesRegex(Exception, "RAY_ADDRESS env variable is expected"):
+                self._scheduler.list()
+
+
     class RayClusterSetup:
         _instance = None  # pyre-ignore[4]
 
@@ -387,6 +392,9 @@ if has_ray():
             status = self.describe(ray_scheduler, job_id)
             self.assertIsNotNone(status)
 
+            app_handles = self.list(ray_scheduler)
+            self.assertEqual(app_handles, [job_id])
+
             ray_cluster_setup.decrement_reference()
 
         def setup_ray_cluster(self) -> RayScheduler:
@@ -429,3 +437,9 @@ if has_ray():
             self, ray_scheduler: RayScheduler, app_id: str = "123"
         ) -> Iterable[str]:
             return ray_scheduler.log_iter(app_id=app_id)
+
+        def list(
+            self, ray_scheduler: RayScheduler
+        ) -> List[str]:
+            os.environ['RAY_ADDRESS'] = "http://127.0.0.1:8265"
+            return ray_scheduler.list()
